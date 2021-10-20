@@ -1,18 +1,14 @@
-version: "3"
+version: '3.1'
 
 services:
-  postgres:
-    container_name: "bdd-exo"
-    image: "postgres:13-alpine"
-    restart: "unless-stopped"
-    environment:
-      POSTGRES_DB: "root"
-      POSTGRES_USER: "root"
-      POSTGRES_PASSWORD: "root"
-    volumes:
-      - "bdd-exo:/var/lib/postgresql/data"
-    ports:
-      - "5433:5432"
 
-volumes:
-  bdd-exo:
+    db:
+        image: mysql
+        restart: always
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: root
+        ports:
+          - "3307:3306"
+        volumes:
+          - $HOME/Desktop/MySQL-Snippets/school.sql:/school.sql
