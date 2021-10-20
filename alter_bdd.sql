@@ -28,6 +28,7 @@ values ('first un', 'last un', 1),
 insert into grounds_sessions(date, time, ground_id, employee_id, movie_id)
 values ('2020-10-25', '20:30', 1, 2, 1),
        ('2020-10-26', '20:00', 2, 1, 2),
+       ('2020-10-26', '20:00', 2, 2, 2),
        ('2020-12-24', '21:30', 1, 3, 3);
 
 insert into clients (f_name, l_name, email, password)
