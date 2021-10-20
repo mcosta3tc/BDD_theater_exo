@@ -142,3 +142,18 @@ where ground_session_id = @session
 group by client_id;
 
 #15. Savoir quels sont les films les plus utilisés parmi toutes nos séances
+select *, count(*) as nb
+from movies
+inner join grounds_sessions gs on movies.id = gs.movie_id
+group by movies.id
+order by nb desc;
+
+#16. Savoirs quels employés ont travaillé sur le plus de séances, affiché par ordre décroissant du nombre de séances
+select f_name, l_name, count(e.id) as nb_session_worked
+from grounds_sessions
+inner join employees e on grounds_sessions.employee_id = e.id
+group by  date
+order by (nb_session_worked) desc;
+
+#17. Savoir le nombre de séances sur lesquels chaque employé a travaillé le mois dernier
+
