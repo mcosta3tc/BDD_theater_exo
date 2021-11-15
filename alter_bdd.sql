@@ -31,7 +31,10 @@ insert into grounds_sessions(date, time, ground_id, employee_id, movie_id)
 values ('2020-10-25', '20:30', 1, 2, 1),
        ('2020-10-26', '20:00', 2, 1, 2),
        ('2020-10-26', '20:00', 2, 2, 2),
-       ('2020-12-24', '21:30', 1, 3, 3);
+       ('2020-12-24', '21:30', 1, 3, 3),
+       ('2021-9-24', '21:30', 1, 3, 3),
+       ('2021-12-20', '21:30', 1, 3, 3),
+       ('2020-12-25', '21:30', 1, 2, 3);
 
 insert into clients (f_name, l_name, email, password)
 values ('first client un', 'last client un', 'un@un.com', 'un'),
@@ -44,4 +47,7 @@ insert into grounds_sessions_reservation(ground_session_id, client_id)
 values (1, 1),
        (1, 2),
        (2, 3),
-       (2, 1);
+       (2, 1),
+       (3, 3),
+       (4, 1),
+       (5, 1);

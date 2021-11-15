@@ -111,7 +111,7 @@ from grounds_sessions
 group by grounds_sessions.date
 having(benefice < 0);
 
-#11. Savoir combien de séances nous faisons en moyenne par mois de l'année
+#11. Savoir combien de séances nous faisons en moyenne par mois de l'année ///
 select month(date) as month,year(date) as year, nbr_by_month, round(avg(nbr_by_month)) as avg_sessions_month
 from (
          select *, count(*) as nbr_by_month
@@ -165,7 +165,10 @@ group by e.id
 order by (nb_session_worked) desc;
 
 #18 Savoir quels clients ont été à au moins 2 séances au même terrain et avec le même film, affichés par ordre alphabétique
-
+select * from
+grounds_sessions_reservation
+inner join clients c on grounds_sessions_reservation.client_id = c.id
+inner join grounds_sessions gs on grounds_sessions_reservation.ground_session_id = gs.id;
 
 
 #19 Avoir la liste des films plus récents qu’une certaine date
