@@ -11,8 +11,8 @@ values (1, 20, 40),
        (3, 30, 100);
 
 insert into movies (title, genre, duration, year, author)
-values ('film un', 'genre un', '01:30', '2012-12-24', 'author un'),
-       ('film deux', 'genre deux', '01:30', '2018-11-08', 'author deux'),
+values ('film un', 'genre un', '01:20', '2012-12-24', 'author un'),
+       ('film deux', 'genre deux', '01:10', '2018-11-08', 'author deux'),
        ('film trois', 'genre trois', '01:30', '2010-09-12', 'author trois');
 
 insert into employees_roles (role_title)
@@ -34,7 +34,9 @@ values ('2020-10-25', '20:30', 1, 2, 1),
 insert into clients (f_name, l_name, email, password)
 values ('first client un', 'last client un', 'un@un.com', 'un'),
        ('first client deux', 'last client deux', 'deux@deux.com', 'deux'),
-       ('first client trois', 'last client trois', 'trois@trois.com', 'trois');
+       ('first client trois', 'last client trois', 'trois@trois.com', 'trois'),
+       ('first client quatre', 'last client quatre', 'quatre@quatre.com', 'quatre'),
+       ('first client cinq', 'last client cinq', 'cinq@cinq.com', 'cinq');
 
 insert into grounds_sessions_reservation(ground_session_id, client_id)
 values (1, 1),

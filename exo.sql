@@ -156,4 +156,29 @@ group by  date
 order by (nb_session_worked) desc;
 
 #17. Savoir le nombre de séances sur lesquels chaque employé a travaillé le mois dernier
+set @actual_date = '2020-11-25';
+select f_name, l_name, count(e.id) as nb_session_worked, date
+from grounds_sessions
+inner join employees e on `grounds_sessions`.employee_id = e.id
+where (month(date) = (month(@actual_date) - 1))
+group by e.id
+order by (nb_session_worked) desc;
 
+#18 Savoir quels clients ont été à au moins 2 séances au même terrain et avec le même film, affichés par ordre alphabétique
+
+#19 Avoir la liste des films plus récents qu’une certaine date
+set @film_date = '2010-11-25';
+select * from
+movies
+where (year(year) > year(@film_date));
+
+#20 Avoir la liste des clients n’ayant été présents à aucune séance
+select *
+from clients
+left join grounds_sessions_reservation gsr on clients.id = gsr.client_id
+where gsr.id is null;
+
+#21. Obtenir la durée moyenne de nos films par genre, classée par ordre décroissant
+select *, hour(duration * 60)
+from movies
+group by genre;
