@@ -13,7 +13,9 @@ values (1, 20, 40),
 insert into movies (title, genre, duration, year, author)
 values ('film un', 'genre un', '01:20', '2012-12-24', 'author un'),
        ('film deux', 'genre deux', '01:10', '2018-11-08', 'author deux'),
-       ('film trois', 'genre trois', '01:30', '2010-09-12', 'author trois');
+       ('film trois', 'genre trois', '01:30', '2010-09-12', 'author trois'),
+       ('film quatre', 'genre trois', '01:05', '2010-06-12', 'author trois'),
+       ('film cinq', 'genre deux', '01:30', '2010-09-12', 'author trois');
 
 insert into employees_roles (role_title)
 values ('role 1'),

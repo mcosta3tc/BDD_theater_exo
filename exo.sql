@@ -166,6 +166,8 @@ order by (nb_session_worked) desc;
 
 #18 Savoir quels clients ont été à au moins 2 séances au même terrain et avec le même film, affichés par ordre alphabétique
 
+
+
 #19 Avoir la liste des films plus récents qu’une certaine date
 set @film_date = '2010-11-25';
 select * from
@@ -179,6 +181,10 @@ left join grounds_sessions_reservation gsr on clients.id = gsr.client_id
 where gsr.id is null;
 
 #21. Obtenir la durée moyenne de nos films par genre, classée par ordre décroissant
-select *, hour(duration * 60)
-from movies
-group by genre;
+select genre, (round(avg(film_min))) as avg_movie_time_minutes
+from(
+    select *, ((hour(duration) * 60) + minute(duration)) as film_min
+    from movies
+    ) t
+group by genre
+order by film_min desc;
