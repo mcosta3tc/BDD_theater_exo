@@ -22,19 +22,19 @@ values ('role 1'),
        ('role 2'),
        ('role 3');
 
-insert into employees (f_name, l_name, employee_role_id)
-values ('first un', 'last un', 1),
-       ('first deux', 'last deux', 2),
-       ('first trois', 'last trois', 3),
-       ('first quatre', 'last quatre', 2),
-       ('first cinq', 'last cinq', 3),
-       ('first six', 'last six', 2);
+insert into employees (f_name, l_name, employee_role_id, phone)
+values ('first un', 'last un', 1, '0565434567'),
+       ('first deux', 'last deux', 2, '0675434567'),
+       ('first trois', 'last trois', 3, '0145434567'),
+       ('first quatre', 'last quatre', 2, '0365434567'),
+       ('first cinq', 'last cinq', 3, '0645678935'),
+       ('first six', 'last six', 2, '0245678935');
 
 
 insert into grounds_sessions(date, time, ground_id, movie_id)
 values ('2021-11-25', '20:30', 1, 1),
        ('2021-11-26', '20:00', 2, 2),
-       ('2021-11-26', '20:00', 2, 2),
+       ('2021-11-27', '20:00', 2, 2),
        ('2022-12-24', '21:30', 1, 3),
        ('2021-9-24', '21:30', 1, 3),
        ('2021-12-20', '21:30', 1, 3),

@@ -16,7 +16,7 @@ from grounds_sessions
          inner join grounds g on grounds_sessions.ground_id = g.id
          inner join addresses a on g.address_id = a.id
          inner join movies m on grounds_sessions.movie_id = m.id
-where (month(date) >= 10)
+where (month(date) = (month(curdate()) + 1))
 group by grounds_sessions.id;
 
 # 2. Connaître le nombre de places restantes pour une séance de cinéma
@@ -45,22 +45,20 @@ from (
                 street_name,
                 city_name,
                 city_zip,
-                max_capacity - count(ground_session_id) as free_capacity
+                max_capacity - count(gsr.ground_session_id) as free_capacity
          from grounds_sessions
                   inner join grounds g on grounds_sessions.ground_id = g.id
                   inner join addresses a on g.address_id = a.id
                   inner join movies m on grounds_sessions.movie_id = m.id
                   inner join grounds_sessions_reservation gsr on grounds_sessions.id = gsr.ground_session_id
          where (date(grounds_sessions.date) > date(@actual_date))
+         group by ground_session_id
      ) t
-where (free_capacity = 0);
+where (free_capacity > 0);
 
 #4. Avoir la liste des informations des employés travaillant à une certaine séance donnée
-set @seance_id = 1;
-select f_name,
-       l_name,
-       date,
-       time
+set @seance_id = 3;
+select f_name, l_name, employee_role_id, phone
 from employees_ground_session
          inner join grounds_sessions gs on employees_ground_session.ground_session_id = gs.id
          inner join employees e on employees_ground_session.employee_id = e.id
@@ -81,36 +79,46 @@ group by region;
 
 # 7. Savoir combien de bénéfice nous avons fait pour une séance donnée sachant que chaque voiture paye 20€ sa place
 set @grounds_sessions_id = 1;
-select (count(ground_session_id) * 20) as benefice
+select (count(gsr.ground_session_id) * 20) as benefice
 from grounds_sessions
-         inner join grounds g on grounds_sessions.ground_id = g.id
          inner join grounds_sessions_reservation gsr on grounds_sessions.id = gsr.ground_session_id
 where grounds_sessions.id = @grounds_sessions_id
 group by grounds_sessions.id;
 
 #8. Savoir combien de dépenses nous avons fait pour une séance donné (sachant que chaque employé nous coûte 300€ par séance)
-set @grounds_sessions_id = 2;
-select count(employee_id) * 300 as emlployees_costs
+set @grounds_sessions_id = 1;
+select (count(egs.employee_id) * 300) as employees_costs
 from grounds_sessions
-         inner join grounds g on grounds_sessions.ground_id = g.id
-         inner join employees e on grounds_sessions.employee_id = e.id
-where grounds_sessions.id = @grounds_sessions_id
-group by grounds_sessions.id;
+         inner join employees_ground_session egs on grounds_sessions.id = egs.ground_session_id
+where grounds_sessions.id = @grounds_sessions_id;
 
 #9. Affichers toutes les séances avec une colonne supplémentaire affichant le gain ou déficit de la séance (argent gagné par les places moins d'argent dépensé par les payes d’employés)
-select *, ((capacity * 20) - (count(employee_id) * 300)) as benefice
-from grounds_sessions
-         inner join employees e on grounds_sessions.employee_id = e.id
-         inner join grounds g on grounds_sessions.ground_id = g.id
-group by grounds_sessions.date;
+select gains.benefice - couts.employees_costs as gains
+from (select grounds_sessions.id as id, (count(gsr.ground_session_id) * 20) as benefice
+      from grounds_sessions
+               left join grounds_sessions_reservation gsr on grounds_sessions.id = gsr.ground_session_id
+      group by grounds_sessions.id) as gains
+         inner join (
+    select grounds_sessions.id, (count(egs.employee_id) * 300) as employees_costs
+    from grounds_sessions
+             left join employees_ground_session egs on grounds_sessions.id = egs.ground_session_id
+    group by grounds_sessions.id
+) as couts on gains.id = couts.id;
+
 
 #10. Avoir la liste des séances où nous avons un déficit d'argent (<0€)
-select *, ((capacity * 20) - (count(employee_id) * 300)) as benefice
-from grounds_sessions
-         inner join employees e on grounds_sessions.employee_id = e.id
-         inner join grounds g on grounds_sessions.ground_id = g.id
-group by grounds_sessions.date
-having (benefice < 0);
+select gains.benefice - couts.employees_costs as gains
+from (select grounds_sessions.id as id, (count(gsr.ground_session_id) * 20) as benefice
+      from grounds_sessions
+               left join grounds_sessions_reservation gsr on grounds_sessions.id = gsr.ground_session_id
+      group by grounds_sessions.id) as gains
+         inner join (
+    select grounds_sessions.id, (count(egs.employee_id) * 300) as employees_costs
+    from grounds_sessions
+             left join employees_ground_session egs on grounds_sessions.id = egs.ground_session_id
+    group by grounds_sessions.id
+) as couts on gains.id = couts.id
+having (gains < 0);
 
 #11. Savoir combien de séances nous faisons en moyenne par mois de l'année ///
 select month(date) as month, year(date) as year, nbr_by_month, round(avg(nbr_by_month)) as avg_sessions_month
@@ -122,16 +130,19 @@ from (
 group by id;
 
 #12. Calculer le taux de remplissage moyen de nos séances (combien de places ont été achetés, divisé par le nombre total de places disponibles)
-select *, capacity / max_capacity
+select *, (count(grounds_sessions_reservation.ground_session_id) / grounds.max_capacity)
 from grounds_sessions
-         inner join grounds g on grounds_sessions.id = g.id
+         inner join grounds on grounds_sessions.id = grounds.id
+         inner join grounds_sessions_reservation on grounds_sessions.id = grounds_sessions_reservation.ground_session_id
 group by grounds_sessions.id;
 
+
 #13. Calculer le taux de remplissage moyen de nos séances par genre de film
-select genre, capacity / max_capacity
+select *, (count(grounds_sessions_reservation.ground_session_id) / grounds.max_capacity)
 from grounds_sessions
+         inner join grounds on grounds_sessions.id = grounds.id
+         inner join grounds_sessions_reservation on grounds_sessions.id = grounds_sessions_reservation.ground_session_id
          inner join movies m on grounds_sessions.movie_id = m.id
-         inner join grounds g on g.id = grounds_sessions.ground_id
 group by genre;
 
 #14. Avoir tous les mails clients pour une séance donnée
@@ -151,16 +162,18 @@ order by nb desc;
 
 #16. Savoirs quels employés ont travaillé sur le plus de séances, affiché par ordre décroissant du nombre de séances
 select f_name, l_name, count(e.id) as nb_session_worked
-from grounds_sessions
-         inner join employees e on grounds_sessions.employee_id = e.id
+from employees_ground_session
+         inner join employees e on employees_ground_session.employee_id = e.id
+         inner join grounds_sessions gs on employees_ground_session.ground_session_id = gs.id
 group by date
 order by (nb_session_worked) desc;
 
 #17. Savoir le nombre de séances sur lesquels chaque employé a travaillé le mois dernier
-set @actual_date = '2020-11-25';
+set @actual_date = '2022-12-24';
 select f_name, l_name, count(e.id) as nb_session_worked, date
-from grounds_sessions
-         inner join employees e on `grounds_sessions`.employee_id = e.id
+from employees_ground_session
+         inner join employees e on employees_ground_session.employee_id = e.id
+         inner join grounds_sessions gs on employees_ground_session.ground_session_id = gs.id
 where (month(date) = (month(@actual_date) - 1))
 group by e.id
 order by (nb_session_worked) desc;

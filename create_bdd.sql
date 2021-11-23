@@ -20,7 +20,7 @@ create table grounds
 (
     id           int not null auto_increment,
     address_id   int not null,
-    max_capacity int not null,
+    max_capacity int not null default 0,
     primary key (id),
     foreign key (address_id) references addresses (id) on delete cascade
 );
@@ -52,6 +52,7 @@ create table employees
     f_name           varchar(255)       not null,
     l_name           varchar(255)       not null,
     employee_role_id int                not null,
+    phone            varchar(20)        not null,
     primary key (id),
     foreign key (employee_role_id) references employees_roles (id) on delete cascade
 );
@@ -59,11 +60,11 @@ create table employees
 drop table if exists grounds_sessions;
 create table grounds_sessions
 (
-    id          int  not null auto_increment,
-    date        date not null,
-    time        time not null,
-    ground_id   int  not null,
-    movie_id    int  not null,
+    id        int  not null auto_increment,
+    date      date not null,
+    time      time not null,
+    ground_id int  not null,
+    movie_id  int  not null,
     primary key (id),
     foreign key (ground_id) references grounds (id) on delete cascade on update cascade,
     foreign key (movie_id) references movies (id) on delete cascade
@@ -72,9 +73,9 @@ create table grounds_sessions
 drop table if exists employees_ground_session;
 create table employees_ground_session
 (
-    id          int  not null auto_increment,
-    ground_session_id   int  not null,
-    employee_id int  not null,
+    id                int not null auto_increment,
+    ground_session_id int not null,
+    employee_id       int not null,
     primary key (id),
     foreign key (ground_session_id) references grounds_sessions (id) on delete cascade on update cascade,
     foreign key (employee_id) references employees (id) on delete cascade on update cascade
