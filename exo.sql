@@ -129,6 +129,15 @@ from (
      ) as avg_by_m
 group by id;
 
+select *
+from (select year(date) as year, count(year(date)) as count_year
+      from grounds_sessions
+      group by year(date)) as year
+         inner join (
+    select month(date) as month, count(month(date)) as count_month
+    from grounds_sessions
+    group by month(date)) as month;
+
 #12. Calculer le taux de remplissage moyen de nos séances (combien de places ont été achetés, divisé par le nombre total de places disponibles)
 select *, (count(grounds_sessions_reservation.ground_session_id) / grounds.max_capacity)
 from grounds_sessions
